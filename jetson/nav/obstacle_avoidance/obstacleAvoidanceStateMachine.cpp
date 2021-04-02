@@ -3,6 +3,7 @@
 #include "utilities.hpp"
 #include "stateMachine.hpp"
 #include "simpleAvoidance.hpp"
+#include "gimballAvoidance.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -78,7 +79,8 @@ ObstacleAvoidanceStateMachine* ObstacleAvoiderFactory ( StateMachine* roverState
         case ObstacleAvoidanceAlgorithm::SimpleAvoidance:
             avoid = new SimpleAvoidance( roverStateMachine );
             break;
-
+        case ObstacleAvoidanceAlgorithm::GimballAvoidance:
+            avoid = new GimballAvoidance( roverStateMachine );
         default:
             std::cerr << "Unkown Search Type. Defaulting to original\n";
             avoid = new SimpleAvoidance( roverStateMachine );

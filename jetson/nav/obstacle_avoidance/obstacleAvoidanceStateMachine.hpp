@@ -9,7 +9,8 @@ class StateMachine;
 // obstacle avoidance algorithms
 enum class ObstacleAvoidanceAlgorithm
 {
-    SimpleAvoidance
+    SimpleAvoidance,
+    GimballAvoidance
 };
 
 // This class is the base class for the logic of the obstacle avoidance state machine

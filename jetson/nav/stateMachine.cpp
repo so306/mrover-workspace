@@ -43,7 +43,8 @@ StateMachine::StateMachine( lcm::LCM& lcmObject )
     mPhoebe = new Rover( mRoverConfig, lcmObject );
     mSearchStateMachine = SearchFactory( this, SearchType::SPIRALOUT );
     mGateStateMachine = GateFactory( this, mPhoebe, mRoverConfig );
-    mObstacleAvoidanceStateMachine = ObstacleAvoiderFactory( this, ObstacleAvoidanceAlgorithm::SimpleAvoidance );
+    mObstacleAvoidanceStateMachine = ObstacleAvoiderFactory( this, 
+        mRoverConfig["gimbal"]["useGimbal"].GetBool() ? ObstacleAvoidanceAlgorithm::GimballAvoidance : ObstacleAvoidanceAlgorithm::SimpleAvoidance );
 } // StateMachine()
 
 // Destructs the StateMachine object. Deallocates memory for the Rover
