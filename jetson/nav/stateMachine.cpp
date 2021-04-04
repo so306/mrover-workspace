@@ -44,7 +44,8 @@ StateMachine::StateMachine( lcm::LCM& lcmObject )
     mSearchStateMachine = SearchFactory( this, SearchType::SPIRALOUT );
     mGateStateMachine = GateFactory( this, mPhoebe, mRoverConfig );
     mObstacleAvoidanceStateMachine = ObstacleAvoiderFactory( this, 
-        mRoverConfig["gimbal"]["useGimbal"].GetBool() ? ObstacleAvoidanceAlgorithm::GimballAvoidance : ObstacleAvoidanceAlgorithm::SimpleAvoidance );
+        mRoverConfig["gimbal"]["useGimbal"].GetBool() ? ObstacleAvoidanceAlgorithm::GimbalAvoidance : ObstacleAvoidanceAlgorithm::SimpleAvoidance,
+        mRoverConfig[ "navThresholds" ][ "waypointDistance" ].GetDouble() );
 } // StateMachine()
 
 // Destructs the StateMachine object. Deallocates memory for the Rover
@@ -513,11 +514,11 @@ double StateMachine::getOptimalAvoidanceAngle() const
     return mPhoebe->roverStatus().obstacle().bearing;
 } // optimalAvoidanceAngle()
 
-// Returns the optimal angle to avoid the detected obstacle.
+// Returns the optimal distance to avoid the detected obstacle.
 double StateMachine::getOptimalAvoidanceDistance() const
 {
-    return mPhoebe->roverStatus().obstacle().distance + mRoverConfig[ "navThresholds" ][ "waypointDistance" ].GetDouble();
-} // optimalAvoidanceAngle()
+    return mPhoebe->roverStatus().obstacle().distance;
+} // optimalAvoidanceDistance()
 
 bool StateMachine::isWaypointReachable( double distance )
 {

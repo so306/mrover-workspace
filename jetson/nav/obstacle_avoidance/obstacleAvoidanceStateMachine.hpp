@@ -10,7 +10,7 @@ class StateMachine;
 enum class ObstacleAvoidanceAlgorithm
 {
     SimpleAvoidance,
-    GimballAvoidance
+    GimbalAvoidance
 };
 
 // This class is the base class for the logic of the obstacle avoidance state machine
@@ -20,7 +20,7 @@ public:
     /*************************************************************************/
     /* Public Member Functions */
     /*************************************************************************/
-    ObstacleAvoidanceStateMachine( StateMachine* stateMachine_ );
+    ObstacleAvoidanceStateMachine( StateMachine* stateMachine_, double thresholdDistance );
 
     virtual ~ObstacleAvoidanceStateMachine() {}
 
@@ -30,11 +30,11 @@ public:
 
     void updateObstacleElements( double bearing, double distance );  
 
+    Odometry createAvoidancePoint( Rover* phoebe, const double distance );
+
     NavState run( Rover* phoebe, const rapidjson::Document& roverConfig );
 
     bool isTargetDetected( Rover* phoebe );
-
-    virtual Odometry createAvoidancePoint( Rover* phoebe, const double distance ) = 0;
 
     virtual NavState executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig ) = 0;
 
@@ -54,8 +54,11 @@ protected:
     // Initial angle to go around obstacle upon detection.
     double mOriginalObstacleAngle;
 
-    // Initial angle to go around obstacle upon detection.
+    // Initial distance to go around obstacle upon detection.
     double mOriginalObstacleDistance;
+
+    // Threshold distance to add to obstacle distance
+    double mThresholdDistance;
 
     // bool for consecutive obstacle detections
     bool mJustDetectedObstacle;
@@ -68,6 +71,7 @@ protected:
 // avoidance algorithm. This allows for an an ease of transition between obstacle 
 // avoidance algorithms
 ObstacleAvoidanceStateMachine* ObstacleAvoiderFactory( StateMachine* roverStateMachine,
-                                                       ObstacleAvoidanceAlgorithm algorithm );
+                                                       ObstacleAvoidanceAlgorithm algorithm,
+                                                       double thresholdDistance );
 
 #endif //OBSTACLE_AVOIDANCE_STATE_MACHINE_HPP

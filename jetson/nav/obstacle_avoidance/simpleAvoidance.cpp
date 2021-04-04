@@ -10,8 +10,8 @@
 // SimpleAvoidance is abstacted from ObstacleAvoidanceStateMachine object so it creates an
 // ObstacleAvoidanceStateMachine object with the roverStateMachine. The SimpleAvoidance object will
 // execute the logic for the simple avoidance algorithm
-SimpleAvoidance::SimpleAvoidance( StateMachine* roverStateMachine )
-    : ObstacleAvoidanceStateMachine( roverStateMachine ) {}
+SimpleAvoidance::SimpleAvoidance( StateMachine* roverStateMachine, double thresholdDistance )
+    : ObstacleAvoidanceStateMachine( roverStateMachine, thresholdDistance ) {}
 
 // Destructs the SimpleAvoidance object.
 SimpleAvoidance::~SimpleAvoidance() {}
@@ -84,20 +84,3 @@ NavState SimpleAvoidance::executeDriveAroundObs( Rover* phoebe )
     }
     return NavState::SearchTurnAroundObs;
 } // executeDriveAroundObs()
-
-// Create the odometry point used to drive around an obstacle
-Odometry SimpleAvoidance::createAvoidancePoint( Rover* phoebe, const double distance )
-{
-    Odometry avoidancePoint = phoebe->roverStatus().odometry();
-    double totalLatitudeMinutes = avoidancePoint.latitude_min +
-        cos( degreeToRadian( avoidancePoint.bearing_deg ) ) * distance * LAT_METER_IN_MINUTES;
-    double totalLongitudeMinutes = avoidancePoint.longitude_min +
-        sin( degreeToRadian( avoidancePoint.bearing_deg ) ) * distance * phoebe->longMeterInMinutes();
-    avoidancePoint.latitude_deg += totalLatitudeMinutes / 60;
-    avoidancePoint.latitude_min = ( totalLatitudeMinutes - ( ( (int) totalLatitudeMinutes) / 60 ) * 60 );
-    avoidancePoint.longitude_deg += totalLongitudeMinutes / 60;
-    avoidancePoint.longitude_min = ( totalLongitudeMinutes - ( ( (int) totalLongitudeMinutes) / 60 ) * 60 );
-
-    return avoidancePoint;
-
-} // createAvoidancePoint()

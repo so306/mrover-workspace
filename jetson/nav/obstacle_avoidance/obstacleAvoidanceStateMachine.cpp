@@ -3,13 +3,14 @@
 #include "utilities.hpp"
 #include "stateMachine.hpp"
 #include "simpleAvoidance.hpp"
-#include "gimballAvoidance.hpp"
+#include "gimbalAvoidance.hpp"
 #include <cmath>
 #include <iostream>
 
 // Constructs an ObstacleAvoidanceStateMachine object with roverStateMachine
-ObstacleAvoidanceStateMachine::ObstacleAvoidanceStateMachine( StateMachine* stateMachine_)
+ObstacleAvoidanceStateMachine::ObstacleAvoidanceStateMachine( StateMachine* stateMachine_, double thresholdDistance)
     : roverStateMachine( stateMachine_ ),
+      mThresholdDistance(thresholdDistance),
       mJustDetectedObstacle( false ) {}
 
 // Allows outside objects to set the original obstacle angle
@@ -23,7 +24,7 @@ void ObstacleAvoidanceStateMachine::updateObstacleAngle( double bearing )
 // This will allow the variable to be set before the rover turns
 void ObstacleAvoidanceStateMachine::updateObstacleDistance( double distance )
 {
-    mOriginalObstacleDistance = distance;
+    mOriginalObstacleDistance = distance + mThresholdDistance;
 }
 
 // Allows outside objects to set the original obstacle angle
@@ -33,6 +34,23 @@ void ObstacleAvoidanceStateMachine::updateObstacleElements( double bearing, doub
     updateObstacleAngle( bearing );
     updateObstacleDistance( distance );
 }
+
+// Create the odometry point used to drive around an obstacle
+Odometry ObstacleAvoidanceStateMachine::createAvoidancePoint( Rover* phoebe, const double distance )
+{
+    Odometry avoidancePoint = phoebe->roverStatus().odometry();
+    double totalLatitudeMinutes = avoidancePoint.latitude_min +
+        cos( degreeToRadian( avoidancePoint.bearing_deg ) ) * distance * LAT_METER_IN_MINUTES;
+    double totalLongitudeMinutes = avoidancePoint.longitude_min +
+        sin( degreeToRadian( avoidancePoint.bearing_deg ) ) * distance * phoebe->longMeterInMinutes();
+    avoidancePoint.latitude_deg += totalLatitudeMinutes / 60;
+    avoidancePoint.latitude_min = ( totalLatitudeMinutes - ( ( (int) totalLatitudeMinutes) / 60 ) * 60 );
+    avoidancePoint.longitude_deg += totalLongitudeMinutes / 60;
+    avoidancePoint.longitude_min = ( totalLongitudeMinutes - ( ( (int) totalLongitudeMinutes) / 60 ) * 60 );
+
+    return avoidancePoint;
+
+} // createAvoidancePoint()
 
 // Runs the avoidance state machine through one iteration. This will be called by StateMachine
 // when NavState is in an obstacle avoidance state. This will call the corresponding function based
@@ -71,19 +89,20 @@ bool ObstacleAvoidanceStateMachine::isTargetDetected ( Rover* phoebe )
 // The obstacle avoidance factory allows for the creation of obstacle avoidance objects and
 // an ease of transition between obstacle avoidance algorithms
 ObstacleAvoidanceStateMachine* ObstacleAvoiderFactory ( StateMachine* roverStateMachine,
-                                                        ObstacleAvoidanceAlgorithm algorithm )
+                                                        ObstacleAvoidanceAlgorithm algorithm,
+                                                        double thresholdDistance )
 {
     ObstacleAvoidanceStateMachine* avoid = nullptr;
     switch ( algorithm )
     {
         case ObstacleAvoidanceAlgorithm::SimpleAvoidance:
-            avoid = new SimpleAvoidance( roverStateMachine );
+            avoid = new SimpleAvoidance( roverStateMachine, thresholdDistance );
             break;
-        case ObstacleAvoidanceAlgorithm::GimballAvoidance:
-            avoid = new GimballAvoidance( roverStateMachine );
+        case ObstacleAvoidanceAlgorithm::GimbalAvoidance:
+            avoid = new GimbalAvoidance( roverStateMachine, thresholdDistance );
         default:
             std::cerr << "Unkown Search Type. Defaulting to original\n";
-            avoid = new SimpleAvoidance( roverStateMachine );
+            avoid = new SimpleAvoidance( roverStateMachine, thresholdDistance );
             break;
     } // switch
     return avoid;
