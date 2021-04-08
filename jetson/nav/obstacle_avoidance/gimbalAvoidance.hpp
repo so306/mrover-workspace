@@ -5,12 +5,17 @@
 
 class GimbalAvoidance : public ObstacleAvoidanceStateMachine 
 {
+
+enum GimbalAvoidanceState {
+    InitialDrive,
+    IntialGimbalTurnedDrive,
+    DriveGimbalStraight,
+    DriveGimbalTurned
+}
 public:
     GimbalAvoidance( StateMachine *roverStateMachine, double thresholdDistance );
 
     ~GimbalAvoidance();
-
-    virtual NavState executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig );
 
     virtual NavState executeDriveAroundObs( Rover* phoebe );
 };

@@ -415,7 +415,7 @@ NavState StateMachine::executeDrive()
     {
         if( nextWaypoint.search )
         {
-            if ( mRoverConfig[ "search" ][ "useGimbal" ].GetBool() ){
+            if ( mRoverConfig[ "gimbal" ][ "useGimbal" ].GetBool() ) {
                 return NavState::SearchGimbal; // Entry point to gimbal process
             }
             else{

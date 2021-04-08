@@ -216,7 +216,7 @@ NavState GateStateMachine::executeGateWait()
     {
         started = false;
         //if using gimbal switch to it.
-        if ( mRoverConfig["search"]["useGimbal"].GetBool() )
+        if ( mRoverConfig["gimbal"]["useGimbal"].GetBool() )
         {
             return NavState::GateSearchGimbal;
         }

@@ -36,7 +36,7 @@ public:
 
     bool isTargetDetected( Rover* phoebe );
 
-    virtual NavState executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig ) = 0;
+    virtual NavState executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig );
 
     virtual NavState executeDriveAroundObs( Rover* phoebe ) = 0;
 

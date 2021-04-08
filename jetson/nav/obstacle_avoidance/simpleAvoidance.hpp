@@ -13,8 +13,6 @@ public:
 
     ~SimpleAvoidance();
 
-    NavState executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig );
-
     NavState executeDriveAroundObs( Rover* phoebe );
 };
 

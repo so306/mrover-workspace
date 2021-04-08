@@ -86,6 +86,42 @@ bool ObstacleAvoidanceStateMachine::isTargetDetected ( Rover* phoebe )
              phoebe->roverStatus().leftTarget().distance >= 0 );
 }
 
+// Turn away from obstacle until it is no longer detected.
+// If in search state and target is both detected and reachable, return NavState TurnToTarget.
+// ASSUMPTION: There is no rock that is more than 8 meters (pathWidth * 2) in diameter
+NavState SimpleAvoidance::executeTurnAroundObs( Rover* phoebe,
+                                                const rapidjson::Document& roverConfig )
+{
+    if( isTargetDetected ( phoebe ) && isTargetReachable( phoebe, roverConfig ) )
+    {
+        return NavState::TurnToTarget;
+    }
+    if( !isObstacleDetected( phoebe ) )
+    {
+        double distanceAroundObs = mOriginalObstacleDistance /
+                                   cos( fabs( degreeToRadian( mOriginalObstacleAngle ) ) );
+        mObstacleAvoidancePoint = createAvoidancePoint( phoebe, distanceAroundObs );
+        if( phoebe->roverStatus().currentState() == NavState::TurnAroundObs )
+        {
+            return NavState::DriveAroundObs;
+        }
+        mJustDetectedObstacle = false;
+        return NavState::SearchDriveAroundObs;
+    }
+
+    double obstacleBearing = phoebe->roverStatus().obstacle().bearing;
+    if( mJustDetectedObstacle &&
+        ( obstacleBearing < 0 ? mLastObstacleAngle >= 0 : mLastObstacleAngle < 0 ) ) {
+        obstacleBearing *= -1;
+    }
+
+    double desiredBearing = mod( phoebe->roverStatus().odometry().bearing_deg + obstacleBearing, 360 );
+    mJustDetectedObstacle = true;
+    mLastObstacleAngle = obstacleBearing;
+    phoebe->turn( desiredBearing );
+    return phoebe->roverStatus().currentState();
+} // executeTurnAroundObs()
+
 // The obstacle avoidance factory allows for the creation of obstacle avoidance objects and
 // an ease of transition between obstacle avoidance algorithms
 ObstacleAvoidanceStateMachine* ObstacleAvoiderFactory ( StateMachine* roverStateMachine,

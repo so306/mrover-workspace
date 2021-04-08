@@ -195,7 +195,7 @@ NavState SearchStateMachine::executeRoverWait( Rover* phoebe, const rapidjson::D
     {
         started = false;
         // Determine wwhich Spin we are executing then go back to the correct method
-        if (roverConfig[ "search" ][ "useGimbal" ].GetBool())
+        if (roverConfig[ "gimbal" ][ "useGimbal" ].GetBool())
         {
             return NavState::SearchGimbal;
         }
@@ -269,7 +269,7 @@ NavState SearchStateMachine::executeSearchDrive( Rover* phoebe, const rapidjson:
         mSearchPoints.pop_front();
     
         //if the rover uses the gimbal use it, otherwise dont.
-        if ( roverConfig[ "search" ][ "useGimbal" ].GetBool() ){
+        if ( roverConfig[ "gimbal" ][ "useGimbal" ].GetBool() ){
             return NavState::SearchGimbal;
         }
         else{
@@ -366,7 +366,7 @@ NavState SearchStateMachine::executeDriveToTarget( Rover* phoebe, const rapidjso
                                                                                     phoebe->roverStatus().leftTarget().distance,
                                                                                     phoebe );
             roverStateMachine->mGateStateMachine->lastKnownRightPost.id = phoebe->roverStatus().leftTarget().id;
-            if (roverConfig["search"]["useGimbal"].GetBool()) {
+            if (roverConfig["gimbal"]["useGimbal"].GetBool()) {
                 cout << "going into gate search gimbal. Last known right post ID: " <<  roverStateMachine->mGateStateMachine->lastKnownRightPost.id << endl;
                 return NavState::GateSearchGimbal;
             }

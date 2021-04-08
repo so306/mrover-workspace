@@ -8,10 +8,7 @@ GimbalAvoidance::~GimbalAvoidance() {
     
 }
 
-NavState GimbalAvoidance::executeTurnAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig ) {
-    return NavState::TurnAroundObs;
-}
-
 NavState GimbalAvoidance::executeDriveAroundObs( Rover* phoebe ) {
+    
     return NavState::DriveAroundObs;
 }
