@@ -87,6 +87,21 @@ double calcBearing( const Odometry& start, const Odometry& dest )
     return radianToDegree( bearing );
 } // calcBearing()
 
+// Caclulates the distance between the current odometry and the
+// destination odometry.
+double calcDistance( const Odometry &start, const Odometry& dest) 
+{
+    double startLat = start.latitude_deg * 60 + start.latitude_min;
+    double endLat = dest.latitude_deg * 60 + dest.latitude_min;
+    double startLong = start.longitude_deg * 60 + start.longitude_min;
+    double endLong = dest.longitude_deg * 60 + dest.longitude_min;
+
+    double dx = (endLong - startLong) * LAT_METER_IN_MINUTES;
+    double dy = (endLat - startLat) * LAT_METER_IN_MINUTES;
+
+    return sqrt(dx * dx + dy * dy);
+} // calcDistance()
+
 // // Calculates the modulo of degree with the given modulus.
 double mod( const double degree, const int modulus )
 {

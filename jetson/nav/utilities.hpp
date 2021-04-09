@@ -26,6 +26,8 @@ Odometry createOdom ( const Odometry & current, const double bearing, const doub
 
 double calcBearing( const Odometry& start, const Odometry& dest );
 
+double calcDistance( const Odometry &start, const Odometry& dest);
+
 double mod( const double degree, const int modulus );
 
 void throughZero( double& destinationBearing, const double currentBearing );

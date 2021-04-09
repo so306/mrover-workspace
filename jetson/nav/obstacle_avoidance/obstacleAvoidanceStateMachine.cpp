@@ -68,7 +68,7 @@ NavState ObstacleAvoidanceStateMachine::run( Rover* phoebe, const rapidjson::Doc
         case NavState::DriveAroundObs:
         case NavState::SearchDriveAroundObs:
         {
-            return executeDriveAroundObs( phoebe );
+            return executeDriveAroundObs( phoebe, roverConfig );
         }
 
         default:
@@ -89,7 +89,7 @@ bool ObstacleAvoidanceStateMachine::isTargetDetected ( Rover* phoebe )
 // Turn away from obstacle until it is no longer detected.
 // If in search state and target is both detected and reachable, return NavState TurnToTarget.
 // ASSUMPTION: There is no rock that is more than 8 meters (pathWidth * 2) in diameter
-NavState SimpleAvoidance::executeTurnAroundObs( Rover* phoebe,
+NavState ObstacleAvoidanceStateMachine::executeTurnAroundObs( Rover* phoebe,
                                                 const rapidjson::Document& roverConfig )
 {
     if( isTargetDetected ( phoebe ) && isTargetReachable( phoebe, roverConfig ) )

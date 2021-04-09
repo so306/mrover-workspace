@@ -18,7 +18,7 @@ SimpleAvoidance::~SimpleAvoidance() {}
 
 // Drives to dummy waypoint. Once arrived, rover will drive to original waypoint
 // ( original waypoint is the waypoint before obstacle avoidance was triggered )
-NavState SimpleAvoidance::executeDriveAroundObs( Rover* phoebe )
+NavState SimpleAvoidance::executeDriveAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig )
 {
     if( isObstacleDetected( phoebe ) )
     {

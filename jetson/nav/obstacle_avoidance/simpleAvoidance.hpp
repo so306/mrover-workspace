@@ -13,7 +13,7 @@ public:
 
     ~SimpleAvoidance();
 
-    NavState executeDriveAroundObs( Rover* phoebe );
+    NavState executeDriveAroundObs( Rover* phoebe, const rapidjson::Document& roverConfig );
 };
 
 #endif //SIMPLE_AVOIDANCE_HPP
